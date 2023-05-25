@@ -1,8 +1,8 @@
 import sqlite3
-from Currency_API_Project.constants import (
+from constants import (
     DATABASE_PATH,
     DATABASE_TABLE,
-    DATABASE_SCHEMA,
+    DATABASE_CREATION_QUERY,
 )
 
 
@@ -14,19 +14,48 @@ class Database:
         self.connection = sqlite3.connect(self.database_path)
         self.cursor = self.connection.cursor()
 
-    def execute(self, query: str) -> None:
-        """Execute a query."""
-        self.cursor.execute(query)
-        self.connection.commit()
+    def __enter__(self):
+        return self
 
-    def create_table(self, table_name: str, data_schema: dict) -> None:
-        """Create a table in the database."""
-        columns = ", ".join(
-            [f"{key} {value}" for key, value in data_schema.items()]
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.connection.close()
+
+    def execute(self, query: str, data: tuple = None) -> None:
+        """Execute a query."""
+        try:
+            if data is None:
+                self.cursor.execute(query)
+            else:
+                self.cursor.execute(query, data)
+            self.connection.commit()
+        except sqlite3.OperationalError as e:
+            print(
+                f"An error occurred: {e}\nWhile executing: {query}\n\
+With data: {data}"
+            )
+            raise
+
+    def execute_many(self, query: str, data: list) -> None:
+        """Execute a list of queries."""
+        try:
+            self.cursor.executemany(query, data)
+            self.connection.commit()
+        except sqlite3.OperationalError as e:
+            print(
+                f"An error occurred: {e}\nWhile executing: {query}\n\
+With data: {data}"
+            )
+            raise
+
+    def fetch(self, number: int = None) -> tuple:
+        """Fetches the next row or rows of a query result set."""
+        return (
+            self.cursor.fetchmany(number) if number else self.cursor.fetchall()
         )
-        self.execute(f"CREATE TABLE {table_name}({columns})")
 
 
 if __name__ == "__main__":
-    database = Database(DATABASE_PATH)
-    database.create_table(DATABASE_TABLE, DATABASE_SCHEMA)
+    with Database(DATABASE_PATH) as database:
+        database.execute(DATABASE_CREATION_QUERY)
+        database.execute(f"SELECT * FROM {DATABASE_TABLE}")
+        print(database.fetch())
