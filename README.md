@@ -21,7 +21,7 @@ This Python application fetches currency exchange rates data from a public API, 
 ## How to run
 
 1. Clone the repository to your local machine.
-2. Install the required Python packages found in the `requirements.txt` file.
+2. Install the required Python packages found in the `requirements.txt` file:
 ```pip install -r requirements.txt```
 3. Add a `.env` file at the root of the project. You should include your API key for the ExchangeRate-API service in this file like so:
 ```API_KEY=your_api_key_here```
