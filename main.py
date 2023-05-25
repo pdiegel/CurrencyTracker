@@ -4,6 +4,7 @@ from constants import (
     DATABASE_CREATION_QUERY,
     DATABASE_PATH,
     DATABASE_TABLE,
+    API_KEY,
 )
 from helpers.currency_exchange_api import CurrencyExchangeAPI
 from helpers.database import Database
@@ -24,7 +25,7 @@ def main():
     try:
         currency_exchange_api = CurrencyExchangeAPI(API_URL)
         currency_exchange_rates = currency_exchange_api.fetch_daily_rates(
-            "USD"
+            "USD", API_KEY
         )
         formatted_exchange_rates = currency_exchange_api.format_data(
             currency_exchange_rates

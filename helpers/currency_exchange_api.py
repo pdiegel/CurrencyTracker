@@ -10,12 +10,12 @@ class CurrencyExchangeAPI:
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
 
-    def fetch_daily_rates(self, base_currency: str) -> dict:
+    def fetch_daily_rates(self, base_currency: str, api_key: str) -> dict:
         """Get the exchange rates for the given base currency."""
         try:
             response = requests.get(
                 self.base_url.format(
-                    api_key=API_KEY,
+                    api_key=api_key,
                     base_currency=base_currency,
                 )
             )
@@ -59,6 +59,6 @@ class APIResponseError(Exception):
 
 if __name__ == "__main__":
     api = CurrencyExchangeAPI(API_URL)
-    api_data = api.fetch_daily_rates("USD")
+    api_data = api.fetch_daily_rates("USD", API_KEY)
     formatted_data = api.format_data(api_data)
     print(formatted_data)
