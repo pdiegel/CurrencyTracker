@@ -77,6 +77,9 @@ class TestDatabase(unittest.TestCase):
         with self.assertRaises(Exception):
             self.database.execute("SELECT * FROM invalid_table")
 
+        # Deleting the test data.
+        self.database.execute(f"DELETE FROM {TEST_DATABASE_TABLE} *")
+
 
 if __name__ == "__main__":
     unittest.main()
